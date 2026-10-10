@@ -268,12 +268,21 @@ export function PackingSection({ record }: { record: OrderRecord }) {
           <div className="text-sm">
             <p className="text-ink-500">This order has not been packed yet.</p>
             {canPack ? (
-              <Link
-                href={`/app/pack/${order.number}`}
-                className="mt-2 inline-block font-medium text-transit-700 underline underline-offset-2"
-              >
-                Pack it at the packing station
-              </Link>
+              <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+                <Link
+                  href={`/app/pack/${order.number}`}
+                  className="font-medium text-transit-700 underline underline-offset-2"
+                >
+                  Pack it at the packing station
+                </Link>
+                <Link
+                  href={`/app/pack/barcodes?order=${order.number}`}
+                  target="_blank"
+                  className="font-medium text-transit-700 underline underline-offset-2"
+                >
+                  Show its barcodes for a demo
+                </Link>
+              </p>
             ) : null}
           </div>
         ) : (

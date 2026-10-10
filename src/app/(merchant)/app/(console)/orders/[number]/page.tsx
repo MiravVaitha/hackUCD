@@ -19,7 +19,9 @@ import { ProductArt } from "@/components/store/product-art";
 import { SimulatedBadge } from "@/components/ui/badge";
 import { buttonClasses, LinkButton } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
+import { CourierControls } from "@/components/orders/courier-controls";
 import { CONSOLE_ROLES, requireUser } from "@/lib/auth/guards";
+import { env } from "@/lib/env";
 import { getCustomerHistory } from "@/lib/orders/history";
 import { buildLifecycle } from "@/lib/orders/lifecycle";
 import { getOrderRecord } from "@/lib/orders/queries";
@@ -33,6 +35,14 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { number } = await params;
   return { title: `Order ${number.toUpperCase()}` };
+}
+
+/** "Saoirse Doyle" becomes "S. Doyle", the way a courier records who took the parcel. */
+function receivedBy(name: string | null): string {
+  const parts = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "";
+  if (parts.length === 1) return parts[0];
+  return `${parts[0][0]}. ${parts[parts.length - 1]}`;
 }
 
 export default async function OrderPage({ params }: { params: Promise<{ number: string }> }) {
@@ -132,7 +142,18 @@ export default async function OrderPage({ params }: { params: Promise<{ number: 
           <CustomerSection record={record} history={history} />
           <PaymentSection record={record} />
           <PackingSection record={record} />
-          <CourierSection record={record} />
+          <CourierSection
+            record={record}
+            controls={
+              env.demoMode && record.shipment ? (
+                <CourierControls
+                  orderId={order.id}
+                  fulfilmentStatus={order.fulfilmentStatus}
+                  defaultSignedBy={receivedBy(order.customerName)}
+                />
+              ) : undefined
+            }
+          />
           <InteractionsSection record={record} />
           <ChargebackSection record={record} />
         </div>

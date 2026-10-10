@@ -159,3 +159,6 @@ next-env.d.ts
 .data/
 test-results/
 playwright-report/
+
+# Copied from node_modules at install time
+public/vendor/

@@ -98,11 +98,25 @@ export type PackingSessionStatus =
   | "completed_with_exceptions"
   | "abandoned";
 
+export type PackingExceptionKind =
+  | "wrong_item"
+  | "over_quantity"
+  | "unknown_code"
+  | "wrong_label"
+  | "short_pack"
+  | "manual_entry"
+  | "photo_skipped"
+  | "label_not_scanned";
+
 export type PackingException = {
-  kind: "wrong_item" | "over_quantity" | "unknown_code" | "wrong_label" | "short_pack" | "manual_entry";
+  kind: PackingExceptionKind;
   code?: string;
   orderItemId?: string;
   note?: string;
+  /**
+   * False: the packer was warned and corrected it. True: a person chose to
+   * continue anyway and gave a reason.
+   */
   overridden: boolean;
   at: string;
 };

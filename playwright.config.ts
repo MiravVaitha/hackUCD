@@ -15,6 +15,12 @@ export default defineConfig({
     baseURL,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
+    permissions: ["camera"],
+    launchOptions: {
+      // Chromium's built-in synthetic camera, so the packing station's real
+      // capture code runs in tests without a physical device.
+      args: ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"],
+    },
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: process.env.E2E_BASE_URL
