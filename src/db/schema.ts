@@ -58,6 +58,8 @@ export type Address = {
 };
 
 export type MerchantSettings = {
+  /** Prefix for order numbers, e.g. "VB" gives VB-1001. */
+  orderPrefix?: string;
   /** Hold incoming test-mode disputes until released from the demo controls. */
   holdTestDisputes?: boolean;
   refundPolicy?: string;
@@ -150,7 +152,7 @@ export type AiRunStatus = "running" | "succeeded" | "failed";
 
 export type DisputeResponseStatus = "draft" | "approved" | "submitted" | "failed";
 
-export type StripeEventStatus = "processed" | "ignored" | "failed";
+export type StripeEventStatus = "processing" | "processed" | "ignored" | "failed";
 
 // ---------------------------------------------------------------------------
 // Tenancy and access

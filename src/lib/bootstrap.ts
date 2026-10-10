@@ -34,12 +34,20 @@ export async function bootstrapDemoMerchant(
     })
     .onConflictDoNothing({ target: merchants.slug });
 
-  const [merchant] = await db
+  const [existingMerchant] = await db
     .select()
     .from(merchants)
     .where(eq(merchants.slug, DEMO_MERCHANT.slug))
     .limit(1);
-  if (!merchant) throw new Error("Demo merchant could not be created");
+  if (!existingMerchant) throw new Error("Demo merchant could not be created");
+
+  // Fill in any settings added since the merchant was created, keeping the
+  // values the merchant has already chosen.
+  const [merchant] = await db
+    .update(merchants)
+    .set({ settings: { ...DEMO_MERCHANT.settings, ...existingMerchant.settings } })
+    .where(eq(merchants.id, existingMerchant.id))
+    .returning();
 
   for (const [index, product] of DEMO_PRODUCTS.entries()) {
     const values = {

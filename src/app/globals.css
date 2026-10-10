@@ -72,6 +72,12 @@
   --color-draft-100: #e6e2fa;
   --color-draft-50: #f4f2fd;
 
+  /* Volt: the demo store's accent, kept apart from the ProofShield palette. */
+  --color-volt-300: #ffe566;
+  --color-volt-400: #ffd60a;
+  --color-volt-500: #f0c400;
+  --color-volt-600: #cfa600;
+
   --shadow-card: 0 1px 0 rgb(10 17 32 / 0.04), 0 1px 3px rgb(10 17 32 / 0.06);
   --shadow-raised: 0 8px 24px -6px rgb(10 17 32 / 0.18), 0 2px 6px rgb(10 17 32 / 0.08);
 

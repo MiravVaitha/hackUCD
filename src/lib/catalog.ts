@@ -11,6 +11,7 @@ export const DEMO_MERCHANT = {
   currency: "eur",
   supportEmail: "help@voltbox.demo",
   settings: {
+    orderPrefix: "VB",
     holdTestDisputes: true,
     refundPolicy:
       "Unused items can be returned within 30 days of delivery for a full refund. " +
