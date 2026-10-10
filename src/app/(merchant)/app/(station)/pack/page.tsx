@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { logoutAction } from "@/app/login/actions";
-import { Logo } from "@/components/brand/logo";
+import { Logo } from "@/components/marketing/verity-logo";
 import { LiveRefresh } from "@/components/console/live-refresh";
 import { requireUser } from "@/lib/auth/guards";
 import { env } from "@/lib/env";

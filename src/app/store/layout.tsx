@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: { default: "Voltbox demo store", template: "%s · Voltbox" },
-  description: "A fictional electronics store used to demonstrate ProofShield AI.",
+  description: "A fictional electronics store used to demonstrate Verity.",
 };
 
 export default function StoreLayout({ children }: { children: React.ReactNode }) {
@@ -13,7 +13,7 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
       <p className="bg-ink-950 px-4 py-2 text-center text-xs text-ink-200">
         Demo store for{" "}
         <Link href="/" className="font-medium text-white underline underline-offset-2">
-          ProofShield AI
+          Verity
         </Link>
         . Payments run in Stripe test mode, so no real money moves.
       </p>

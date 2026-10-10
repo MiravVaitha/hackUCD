@@ -24,7 +24,7 @@ function getDecoyHash(): Promise<string> {
 function safeNextPath(value: FormDataEntryValue | null): string | null {
   if (typeof value !== "string") return null;
   // Only same-site paths inside the merchant app.
-  return /^\/app(\/[\w\-./?=&%]*)?$/.test(value) ? value : null;
+  return /^\/(?:account|app(?:\/[\w\-./?=&%]*)?)$/.test(value) ? value : null;
 }
 
 export async function loginAction(_previous: LoginState, formData: FormData): Promise<LoginState> {

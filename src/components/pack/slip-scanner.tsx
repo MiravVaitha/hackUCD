@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { PackingState } from "@/lib/packing/service";
-import { useBarcodeScanner, useBeeper, useCamera, useScannerKeyboard } from "./camera";
+import { cameraProblem, useBarcodeScanner, useBeeper, useCamera, useScannerKeyboard } from "./camera";
 
 /** Scan a packing slip to open its order on the packing screen. */
 export function SlipScanner() {
@@ -76,11 +76,10 @@ export function SlipScanner() {
             ) : (
               <>
                 <Camera className="h-8 w-8 text-ink-400" aria-hidden="true" />
-                <p className="text-sm text-ink-200">
-                  {cameraStatus === "denied"
-                    ? "Camera access is blocked for this site. Allow it in the browser settings, or type the order number on the previous screen."
-                    : "No camera is available here. Type the order number on the previous screen."}
-                </p>
+                <p className="text-sm text-ink-200">{cameraProblem(cameraStatus)}</p>
+                <Link href="/app/pack" className="text-xs text-ink-300 underline underline-offset-4">
+                  Or type the order number instead
+                </Link>
                 <button type="button" onClick={() => void startCamera()} className="rounded-full bg-white px-4 py-2 text-sm font-medium text-ink-950">
                   Try the camera again
                 </button>
@@ -98,7 +97,9 @@ export function SlipScanner() {
           : (message ??
             (scanner.failed
               ? "The scanner could not load. Type the order number instead."
-              : "Point the camera at the code on the packing slip."))}
+              : cameraProblem(cameraStatus)
+                ? "A handheld USB or Bluetooth scanner still works on this screen."
+                : "Point the camera at the code on the packing slip."))}
       </p>
     </div>
   );

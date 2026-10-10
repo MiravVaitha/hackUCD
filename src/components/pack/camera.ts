@@ -2,7 +2,23 @@
 
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 
-export type CameraStatus = "idle" | "starting" | "ready" | "denied" | "unavailable";
+export type CameraStatus = "idle" | "starting" | "ready" | "denied" | "insecure" | "busy" | "unavailable";
+
+/** What to tell the packer when the camera cannot start, and what to do instead. */
+export function cameraProblem(status: CameraStatus): string | null {
+  switch (status) {
+    case "denied":
+      return "Camera access is blocked for this site. Allow the camera in your browser's site settings, then try again.";
+    case "insecure":
+      return "The camera only works over a secure https:// link. Open the station from the https address, not a local http:// one.";
+    case "busy":
+      return "Another app is using the camera. Close it (or other camera tabs), then try again.";
+    case "unavailable":
+      return "No camera was found on this device.";
+    default:
+      return null;
+  }
+}
 
 export type CapturedPhoto = { blob: Blob; width: number; height: number };
 
@@ -38,11 +54,27 @@ async function encodeJpeg(
 
 /** Downscale a photo chosen from the phone's own camera app. */
 export async function photoFromFile(file: File): Promise<CapturedPhoto> {
-  const bitmap = await createImageBitmap(file);
+  if (typeof createImageBitmap === "function") {
+    try {
+      // Respect the EXIF rotation so portrait phone photos are not stored sideways.
+      const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+      try {
+        return await encodeJpeg(bitmap, bitmap.width, bitmap.height);
+      } finally {
+        bitmap.close();
+      }
+    } catch {
+      // Older Safari: fall back to an <img>, which also applies EXIF rotation.
+    }
+  }
+  const url = URL.createObjectURL(file);
   try {
-    return await encodeJpeg(bitmap, bitmap.width, bitmap.height);
+    const image = new Image();
+    image.src = url;
+    await image.decode();
+    return await encodeJpeg(image, image.naturalWidth, image.naturalHeight);
   } finally {
-    bitmap.close();
+    URL.revokeObjectURL(url);
   }
 }
 
@@ -84,26 +116,43 @@ export function useCamera() {
 
   const start = useCallback(async () => {
     if (streamRef.current) return;
+    if (typeof window !== "undefined" && !window.isSecureContext) {
+      // Phones hide the camera API entirely on plain http:// pages.
+      setStatus("insecure");
+      return;
+    }
     if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
       setStatus("unavailable");
       return;
     }
     setStatus("starting");
+    const open = (video: MediaTrackConstraints | true) =>
+      navigator.mediaDevices.getUserMedia({ audio: false, video });
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: {
+      let stream: MediaStream;
+      try {
+        stream = await open({
           facingMode: { ideal: "environment" },
           width: { ideal: 1920 },
           height: { ideal: 1080 },
-        },
-      });
+        });
+      } catch (error) {
+        // Some cameras reject the preferred size; any camera is better than none.
+        if (error instanceof DOMException && error.name === "OverconstrainedError") stream = await open(true);
+        else throw error;
+      }
       streamRef.current = stream;
       connect();
       setStatus("ready");
     } catch (error) {
       const name = error instanceof DOMException ? error.name : "";
-      setStatus(name === "NotAllowedError" || name === "SecurityError" ? "denied" : "unavailable");
+      setStatus(
+        name === "NotAllowedError" || name === "SecurityError"
+          ? "denied"
+          : name === "NotReadableError" || name === "AbortError"
+            ? "busy"
+            : "unavailable",
+      );
     }
   }, [connect]);
 

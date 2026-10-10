@@ -6,9 +6,13 @@ import { stripeEvents } from "@/db/schema";
 import { describeStripeError } from "./client";
 import { markCheckoutFailed, recordPaidCheckoutSession } from "./payments";
 import { syncRefundsForCharge } from "./refunds";
+import { confirmSubscriptionCheckout, syncSubscriptionStatus } from "./billing";
+import { syncDispute } from "./disputes";
 
 /** Event types the app acts on. Also the list to select on the webhook endpoint. */
 export const HANDLED_EVENT_TYPES = [
+  "customer.subscription.updated",
+  "customer.subscription.deleted",
   "checkout.session.completed",
   "checkout.session.async_payment_succeeded",
   "checkout.session.async_payment_failed",
@@ -84,8 +88,25 @@ async function claimEvent(event: Stripe.Event, via: "webhook" | "sync"): Promise
 
 async function handle(event: Stripe.Event): Promise<HandlerOutcome> {
   switch (event.type) {
+    case "charge.dispute.created":
+    case "charge.dispute.updated":
+    case "charge.dispute.closed":
+    case "charge.dispute.funds_withdrawn":
+    case "charge.dispute.funds_reinstated": {
+      const changed = await syncDispute(event.data.object.id, event.id);
+      return { status: changed ? "processed" : "ignored", note: changed ? "Stripe dispute recorded" : "Dispute belongs to an unknown order" };
+    }
+    case "customer.subscription.updated":
+    case "customer.subscription.deleted": {
+      const changed = await syncSubscriptionStatus(event.data.object.id);
+      return { status: changed ? "processed" : "ignored", note: changed ? "Premium subscription status refreshed" : "Subscription is not linked to this workspace" };
+    }
     case "checkout.session.completed":
     case "checkout.session.async_payment_succeeded": {
+      if (event.data.object.metadata?.kind === "verity_subscription") {
+        const confirmed = await confirmSubscriptionCheckout(event.data.object.id);
+        return { status: confirmed ? "processed" : "ignored", note: confirmed ? "Verity test subscription activated" : "Subscription checkout not paid" };
+      }
       // The event only tells us which session; the facts are re-read from Stripe.
       const result = await recordPaidCheckoutSession(event.data.object.id);
       if (result.status === "unknown_order") {

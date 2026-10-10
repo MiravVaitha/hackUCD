@@ -6,8 +6,8 @@ import type { MetadataRoute } from "next";
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "ProofShield packing station",
-    short_name: "ProofShield",
+    name: "Verity packing station",
+    short_name: "Verity",
     description: "Scan, photograph and verify orders as they are packed.",
     start_url: "/app/pack",
     scope: "/",

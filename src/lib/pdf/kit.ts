@@ -88,9 +88,9 @@ export class PdfBuilder {
   static async create(options: PdfBuilderOptions): Promise<PdfBuilder> {
     const doc = await PDFDocument.create();
     doc.setTitle(toWinAnsi(options.title));
-    doc.setAuthor(toWinAnsi(options.author ?? "ProofShield AI"));
-    doc.setCreator("ProofShield AI");
-    doc.setProducer("ProofShield AI");
+    doc.setAuthor(toWinAnsi(options.author ?? "Verity"));
+    doc.setCreator("Verity");
+    doc.setProducer("Verity");
     if (options.subject) doc.setSubject(toWinAnsi(options.subject));
     doc.setCreationDate(new Date());
 
@@ -346,8 +346,17 @@ export class PdfBuilder {
       this.y = top - height;
     };
 
+    const rowHeight = (cells: string[], font: PDFFont) => Math.max(...cells.map((cell, index) => this.wrap(cell ?? "", font, size, columnWidths[index] - padding * 2).length)) * lineHeight + padding * 2;
+    const headerHeight = rowHeight(headers, this.bold);
+    this.ensure(headerHeight + (rows[0] ? rowHeight(rows[0], this.regular) : 0));
     drawRow(headers, this.bold, true);
-    for (const row of rows) drawRow(row, this.regular, false);
+    for (const row of rows) {
+      if (this.y - MARGIN_BOTTOM < rowHeight(row, this.regular)) {
+        this.addPage();
+        drawRow(headers, this.bold, true);
+      }
+      drawRow(row, this.regular, false);
+    }
     this.spacer(8);
   }
 

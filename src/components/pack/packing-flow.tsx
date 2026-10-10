@@ -21,6 +21,7 @@ import type { ScanMethod } from "@/db/schema";
 import type { OverrideInput, PackingState, PackingStep, ScanOutcome } from "@/lib/packing/service";
 import { cn, formatDuration } from "@/lib/utils";
 import {
+  cameraProblem,
   photoFromFile,
   useBarcodeScanner,
   useBeeper,
@@ -255,7 +256,7 @@ export function PackingFlow({ orderNumber }: { orderNumber: string }) {
     try {
       await savePhoto(photoKind, await photoFromFile(file));
     } catch {
-      setError("That photo could not be read. Try again.");
+      setError("That photo could not be read. Take it again, or choose a JPEG or PNG.");
     }
   };
 
@@ -438,10 +439,9 @@ export function PackingFlow({ orderNumber }: { orderNumber: string }) {
             ) : (
               <>
                 <Camera className="h-8 w-8 text-ink-400" aria-hidden="true" />
-                <p className="text-sm text-ink-200">
-                  {cameraStatus === "denied"
-                    ? "Camera access is blocked for this site. Allow it in the browser settings, or type codes by hand."
-                    : "No camera is available here. Type codes by hand instead."}
+                <p className="text-sm text-ink-200">{cameraProblem(cameraStatus)}</p>
+                <p className="text-xs text-ink-400">
+                  {photoStep ? "You can upload a photo from the phone's camera app below." : "You can type codes by hand below."}
                 </p>
                 <button type="button" onClick={() => void startCamera()} className="rounded-full bg-white px-4 py-2 text-sm font-medium text-ink-950">
                   Try the camera again
@@ -491,9 +491,22 @@ export function PackingFlow({ orderNumber }: { orderNumber: string }) {
             <Tag className="h-5 w-5 shrink-0 text-ink-300" aria-hidden="true" />
             <div className="min-w-0">
               <p className="text-xs text-ink-400">Expected label</p>
-              <p className="font-mono text-base">{state.trackingNumber ?? "No label created"}</p>
+              <p className="font-mono text-base break-all">{state.trackingNumber ?? "No label created"}</p>
               <p className="truncate text-xs text-ink-400">{state.carrier}</p>
             </div>
+          </div>
+        ) : null}
+
+        {step === "label" && !state.trackingNumber ? (
+          <div className="mt-2 rounded-xl bg-amber-500/15 px-4 py-3 text-sm text-amber-100">
+            <p>This order has no shipping label to scan yet.</p>
+            <button
+              type="button"
+              onClick={() => setSheet("help")}
+              className="mt-2 font-medium text-white underline underline-offset-4"
+            >
+              Continue without a label scan
+            </button>
           </div>
         ) : null}
 
@@ -559,16 +572,14 @@ export function PackingFlow({ orderNumber }: { orderNumber: string }) {
                 </>
               )}
             </button>
-            {cameraStatus !== "ready" ? (
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={busy !== null}
-                className="flex h-12 w-full items-center justify-center rounded-full border border-white/25 text-sm font-medium"
-              >
-                Use the phone&rsquo;s camera app instead
-              </button>
-            ) : null}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={busy !== null}
+              className="flex h-12 w-full items-center justify-center rounded-full border border-white/25 text-sm font-medium disabled:opacity-50"
+            >
+              {cameraStatus === "ready" ? "Or upload a photo instead" : "Use the phone’s camera app instead"}
+            </button>
             <input ref={fileInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={onFileChosen} />
           </>
         ) : null}

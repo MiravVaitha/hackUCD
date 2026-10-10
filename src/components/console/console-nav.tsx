@@ -2,6 +2,7 @@
 
 import {
   Landmark,
+  Mail,
   LayoutDashboard,
   LogOut,
   MessagesSquare,
@@ -14,7 +15,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { logoutAction } from "@/app/login/actions";
-import { Logo } from "@/components/brand/logo";
+import { Logo } from "@/components/marketing/verity-logo";
 import type { UserRole } from "@/db/schema";
 import type { NavCounts } from "@/lib/console/nav-counts";
 import { cn } from "@/lib/utils";
@@ -48,7 +49,8 @@ export function ConsoleNav({
   const pathname = usePathname();
 
   const items: NavItem[] = [
-    { href: "/app", label: "Overview", icon: LayoutDashboard, exact: true },
+    { href: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
+    { href: "/app/deliveries", label: "Delivery emails", icon: Mail },
     { href: "/app/orders", label: "Orders", icon: Package },
     {
       href: "/app/complaints",
@@ -59,7 +61,7 @@ export function ConsoleNav({
     },
     {
       href: "/app/disputes",
-      label: "Disputes",
+      label: "Disputes & evidence",
       icon: Landmark,
       count: counts.disputesToAnswer,
       countTone: "signal",
@@ -72,6 +74,7 @@ export function ConsoleNav({
       countTone: "neutral",
     },
     { href: "/app/settings", label: "Settings", icon: Settings, ownerOnly: true },
+    { href: "/account", label: "Account & billing", icon: Landmark, ownerOnly: true },
   ];
   const visible = items.filter((item) => !item.ownerOnly || user.role === "owner");
 
@@ -83,7 +86,7 @@ export function ConsoleNav({
       {/* Desktop sidebar */}
       <aside className="no-print sticky top-0 hidden h-screen flex-col bg-ink-950 text-ink-200 lg:flex">
         <div className="px-5 pt-6 pb-5">
-          <Link href="/app" aria-label="ProofShield overview">
+          <Link href="/app" aria-label="Verity dashboard">
             <Logo tone="light" />
           </Link>
           <p className="mt-4 flex items-center justify-between text-sm">
@@ -143,7 +146,7 @@ export function ConsoleNav({
       {/* Mobile top bar */}
       <div className="no-print sticky top-0 z-30 bg-ink-950 text-ink-200 lg:hidden">
         <div className="flex items-center justify-between px-4 pt-3">
-          <Link href="/app" aria-label="ProofShield overview">
+          <Link href="/app" aria-label="Verity dashboard">
             <Logo tone="light" />
           </Link>
           <form action={logoutAction}>

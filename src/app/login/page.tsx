@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { Logo } from "@/components/brand/logo";
+import { Logo } from "@/components/marketing/verity-logo";
 import { SetupNotice } from "@/components/setup-notice";
 import { homeForRole } from "@/lib/auth/guards";
 import { getSession } from "@/lib/auth/session";
@@ -29,13 +29,13 @@ export default async function LoginPage({
 
   if (isDatabaseConfigured()) {
     const session = await getSession();
-    if (session) redirect(homeForRole(session.user.role));
+    if (session) redirect(session.user.role !== "packer" && next && /^\/(?:account|app(?:\/[\w\-./?=&%]*)?)$/.test(next) ? next : homeForRole(session.user.role));
   }
 
   return (
     <div className="grid min-h-screen lg:grid-cols-[1fr_1.1fr]">
       <aside className="ledger-rules hidden flex-col justify-between bg-ink-950 p-10 text-white lg:flex">
-        <Link href="/" aria-label="ProofShield home">
+        <Link href="/" aria-label="Verity home">
           <Logo tone="light" />
         </Link>
         <div>
@@ -51,7 +51,7 @@ export default async function LoginPage({
 
       <main className="flex flex-col justify-center px-5 py-10 sm:px-10">
         <div className="mx-auto w-full max-w-sm">
-          <Link href="/" className="lg:hidden" aria-label="ProofShield home">
+          <Link href="/" className="lg:hidden" aria-label="Verity home">
             <Logo />
           </Link>
           <h1 className="mt-8 text-2xl font-semibold tracking-tight text-ink-950 lg:mt-0">

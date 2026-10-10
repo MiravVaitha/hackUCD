@@ -33,7 +33,7 @@ const SOURCE_LABELS: Record<string, string> = {
   web_form: "Customer help form",
   merchant_app: "Merchant app",
   ai: "AI assistant",
-  proofshield: "ProofShield",
+  proofshield: "Verity",
 };
 
 export function sourceLabel(source: string): string {

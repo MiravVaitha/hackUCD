@@ -20,6 +20,7 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
 
   const stored = await readEvidenceBytes(id, session.merchant.id);
   if (!stored) return new Response("Not found.", { status: 404 });
+  if (session.user.role === "packer" && stored.file.mime === "application/pdf") return new Response("You do not have access to evidence reports.", { status: 403 });
 
   await db.insert(accessLogs).values({
     merchantId: session.merchant.id,
@@ -40,7 +41,7 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     "Content-Length": String(stored.bytes.length),
     "Content-Disposition": `${download ? "attachment" : "inline"}; filename="${fileName}"`,
     // Content never changes for a given ID, but it is private to the merchant.
-    "Cache-Control": "private, max-age=3600, immutable",
+    "Cache-Control": "private, no-store",
     "X-Content-Type-Options": "nosniff",
     "X-Evidence-SHA256": stored.file.sha256,
   };

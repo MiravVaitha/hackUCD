@@ -9,11 +9,11 @@
 
 @theme {
   /* Ink: text, sidebars, the packing station. */
-  --color-ink-950: #0a1120;
-  --color-ink-900: #111a2e;
+  --color-ink-950: #212529;
+  --color-ink-900: #292e33;
   --color-ink-800: #1a2540;
   --color-ink-700: #293655;
-  --color-ink-600: #3e4c6c;
+  --color-ink-600: #495057;
   --color-ink-500: #5c6988;
   --color-ink-400: #8590ab;
   --color-ink-300: #b4bccd;
@@ -22,8 +22,8 @@
   --color-ink-50: #f5f6f9;
 
   /* Paper: page background and hairlines, slightly warm. */
-  --color-paper: #f7f5f0;
-  --color-paper-deep: #efece4;
+  --color-paper: #f8f6ee;
+  --color-paper-deep: #efead5;
   --color-line: #e2ded4;
   --color-line-strong: #cfc9bb;
 
@@ -47,8 +47,8 @@
 
   /* Signal: mismatches, disputes, destructive actions. */
   --color-signal-800: #7f1610;
-  --color-signal-700: #9f1a14;
-  --color-signal-600: #c2281f;
+  --color-signal-700: #8c1c13;
+  --color-signal-600: #c92a2e;
   --color-signal-500: #de4439;
   --color-signal-200: #f6b9b3;
   --color-signal-100: #fbdcd9;

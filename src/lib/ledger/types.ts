@@ -18,6 +18,7 @@ export const LEDGER_EVENT_TYPES = {
   "packing.label_photo": { label: "Photo of labelled parcel", stage: "packing" },
   "packing.completed": { label: "Packing completed", stage: "packing" },
 
+  "delivery.email_imported": { label: "Delivery email imported (unverified)", stage: "delivery" },
   "shipment.label_created": { label: "Shipping label created", stage: "dispatch" },
   "shipment.handed_to_carrier": { label: "Handed to carrier", stage: "dispatch" },
   "shipment.in_transit": { label: "In transit", stage: "dispatch" },

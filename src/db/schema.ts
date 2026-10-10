@@ -58,6 +58,16 @@ export type Address = {
 };
 
 export type MerchantSettings = {
+  billing?: {
+    checkoutSessionId?: string;
+    subscriptionId?: string;
+    status?: string;
+    testMode?: boolean;
+    paymentStatus?: string;
+    amountPaid?: number;
+    currency?: string;
+    invoiceId?: string;
+  };
   /** Prefix for order numbers, e.g. "VB" gives VB-1001. */
   orderPrefix?: string;
   /** Hold incoming test-mode disputes until released from the demo controls. */
@@ -161,7 +171,7 @@ export type ComplaintResolution =
   | "declined"
   | "other";
 
-export type AiRunKind = "investigation" | "rebuttal";
+export type AiRunKind = "investigation" | "rebuttal" | "win_assessment";
 export type AiRunStatus = "running" | "succeeded" | "failed";
 
 export type DisputeResponseStatus = "draft" | "approved" | "submitted" | "failed";

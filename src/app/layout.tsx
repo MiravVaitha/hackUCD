@@ -23,15 +23,15 @@ const displaySerif = Instrument_Serif({
 
 export const metadata: Metadata = {
   title: {
-    default: "ProofShield AI",
-    template: "%s · ProofShield",
+    default: "Verity",
+    template: "%s · Verity",
   },
   description:
     "Order evidence, customer complaint resolution and chargeback defence for small merchants.",
-  applicationName: "ProofShield",
+  applicationName: "Verity",
   appleWebApp: {
     capable: true,
-    title: "ProofShield",
+    title: "Verity",
     statusBarStyle: "black-translucent",
   },
 };

@@ -6,7 +6,7 @@ import { getNavCounts } from "@/lib/console/nav-counts";
 export const dynamic = "force-dynamic";
 
 export default async function ConsoleLayout({ children }: { children: React.ReactNode }) {
-  const session = await requireUser(CONSOLE_ROLES);
+  const session = await requireUser(CONSOLE_ROLES, true);
   const counts = await getNavCounts(session.merchant.id);
 
   return (

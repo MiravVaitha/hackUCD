@@ -10,6 +10,7 @@ import { db } from "@/db/client";
 export async function getLiveVersion(merchantId: string): Promise<string> {
   const rows = await db.execute<{ version: string }>(sql`
     select concat_ws(':',
+      (select coalesce(settings->'billing'->>'status', 'free') from merchants where id = ${merchantId}),
       (select count(*) from ledger_events where merchant_id = ${merchantId}),
       (select count(*) from orders where merchant_id = ${merchantId} and payment_status <> 'pending'),
       (select count(*) from complaints where merchant_id = ${merchantId}),
