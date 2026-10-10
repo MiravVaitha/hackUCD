@@ -5,6 +5,7 @@ import { db } from "@/db/client";
 import { stripeEvents } from "@/db/schema";
 import { describeStripeError } from "./client";
 import { markCheckoutFailed, recordPaidCheckoutSession } from "./payments";
+import { syncRefundsForCharge } from "./refunds";
 
 /** Event types the app acts on. Also the list to select on the webhook endpoint. */
 export const HANDLED_EVENT_TYPES = [
@@ -102,6 +103,14 @@ async function handle(event: Stripe.Event): Promise<HandlerOutcome> {
       return changed
         ? { status: "processed", note: "Order marked as not paid" }
         : { status: "ignored", note: "No pending order for this session" };
+    }
+
+    case "charge.refunded": {
+      const result = await syncRefundsForCharge(event.data.object.id);
+      if (result.status === "unknown_order") {
+        return { status: "ignored", note: "Charge belongs to another environment" };
+      }
+      return { status: "processed", note: `${result.count} refund(s) recorded` };
     }
 
     default:
