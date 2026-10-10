@@ -1,0 +1,168 @@
+@import "tailwindcss";
+
+/* Fonts are loaded in the root layout and exposed as CSS variables. */
+@theme inline {
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-display: var(--font-display-serif), Georgia, "Times New Roman", serif;
+}
+
+@theme {
+  /* Ink: text, sidebars, the packing station. */
+  --color-ink-950: #0a1120;
+  --color-ink-900: #111a2e;
+  --color-ink-800: #1a2540;
+  --color-ink-700: #293655;
+  --color-ink-600: #3e4c6c;
+  --color-ink-500: #5c6988;
+  --color-ink-400: #8590ab;
+  --color-ink-300: #b4bccd;
+  --color-ink-200: #d7dce6;
+  --color-ink-100: #ebeef3;
+  --color-ink-50: #f5f6f9;
+
+  /* Paper: page background and hairlines, slightly warm. */
+  --color-paper: #f7f5f0;
+  --color-paper-deep: #efece4;
+  --color-line: #e2ded4;
+  --color-line-strong: #cfc9bb;
+
+  /* Seal: verified by a source record. */
+  --color-seal-800: #0a4d3c;
+  --color-seal-700: #0b5e49;
+  --color-seal-600: #0f7b5f;
+  --color-seal-500: #169b78;
+  --color-seal-200: #b5e3d3;
+  --color-seal-100: #d9f2e9;
+  --color-seal-50: #eef9f5;
+
+  /* Amber: cannot be verified, needs attention. */
+  --color-amber-800: #6f4708;
+  --color-amber-700: #8a5a0b;
+  --color-amber-600: #b7791f;
+  --color-amber-500: #d99a2b;
+  --color-amber-200: #f6dc98;
+  --color-amber-100: #fcefc9;
+  --color-amber-50: #fef8e6;
+
+  /* Signal: mismatches, disputes, destructive actions. */
+  --color-signal-800: #7f1610;
+  --color-signal-700: #9f1a14;
+  --color-signal-600: #c2281f;
+  --color-signal-500: #de4439;
+  --color-signal-200: #f6b9b3;
+  --color-signal-100: #fbdcd9;
+  --color-signal-50: #fef1f0;
+
+  /* Transit: in progress, informational. */
+  --color-transit-800: #173f85;
+  --color-transit-700: #1e4fa3;
+  --color-transit-600: #2563c9;
+  --color-transit-500: #4a84e0;
+  --color-transit-200: #bcd3f6;
+  --color-transit-100: #dce8fb;
+  --color-transit-50: #eff5fe;
+
+  /* Draft: AI-written text awaiting human review. */
+  --color-draft-800: #3b2f8f;
+  --color-draft-700: #4a3cab;
+  --color-draft-600: #5b4bc4;
+  --color-draft-500: #7a6bdb;
+  --color-draft-200: #cdc6f3;
+  --color-draft-100: #e6e2fa;
+  --color-draft-50: #f4f2fd;
+
+  --shadow-card: 0 1px 0 rgb(10 17 32 / 0.04), 0 1px 3px rgb(10 17 32 / 0.06);
+  --shadow-raised: 0 8px 24px -6px rgb(10 17 32 / 0.18), 0 2px 6px rgb(10 17 32 / 0.08);
+
+  --animate-flash: flash 0.6s ease-out;
+  --animate-rise: rise 0.35s ease-out both;
+
+  @keyframes flash {
+    0% {
+      opacity: 0.9;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: var(--color-seal-200);
+    color: var(--color-ink-950);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-transit-600);
+    outline-offset: 2px;
+  }
+
+  /* Hashes, IDs, barcodes and amounts line up in columns. */
+  .font-mono,
+  code,
+  kbd,
+  samp {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "zero" 1;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary {
+    cursor: pointer;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Faint ruled-paper texture used behind the landing hero and login panel. */
+  .ledger-rules {
+    background-image: linear-gradient(to bottom, transparent 31px, rgb(255 255 255 / 0.05) 32px);
+    background-size: 100% 32px;
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}

@@ -150,3 +150,12 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Next.js
+next-env.d.ts
+.vercel
+
+# Local dev data (embedded Postgres) and test output
+.data/
+test-results/
+playwright-report/
